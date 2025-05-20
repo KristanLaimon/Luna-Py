@@ -1,5 +1,8 @@
 import flet as ft
 
+def Suma(a:int, b:int) -> int:
+  return a + b
+
 def main(page: ft.Page):
   page.title = "A simple counter app"
   page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -8,11 +11,11 @@ def main(page: ft.Page):
   
   def minus_click(e):
     txt_number.value = str(int(txt_number.value) - 1)
-    print("MInus click")
+    page.update()
     
   def plus_click(e):
     txt_number.value = str(int(txt_number.value) + 1)
-    print("Plus click")
+    page.update()
     
   page.add(
     ft.Row(
