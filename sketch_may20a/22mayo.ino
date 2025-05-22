@@ -1,21 +1,42 @@
-int pinBoton=2; //esp32 specific
-int estado;
-int estadoAnt=LOW;
-int sw=0;
+
+
+int pin_buzzer=4;
+int frecuencia = 440;
+bool allow_sound = false;
+String inputString = "";
+unsigned int microseconds;
+int dato = 0;
 
 void setup(){
-  pinMode(pinBoton,INPUT);
+  pinMode(pin_buzzer, OUTPUT);
   Serial.begin(9600);
 }
 
-void loop() {
-  estado = digitalRead(pinBoton);
-  if (estado == HIGH && estadoAnt==LOW){
-    estadoAnt=HIGH;
-    if (sw==0) sw = 1;
-    else sw = 0;
-    Serial.print(sw);
-  }else if (estado == LOW && estadoAnt==HIGH){
-    estadoAnt=LOW;
+void loop(){
+  if (allow_sound){
+    microseconds = 1000000.0/(2.0*frecuencia);
+    digitalWrite(pin_buzzer,HIGH);
+    delayMicroseconds(microseconds);
+    digitalWrite(pin_buzzer, LOW);
+    delayMicroseconds(microseconds);
+  }
+
+    while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n') {
+      parseInput(inputString);
+      inputString = "";
+    } else {
+      inputString += c;
+    }
+    }
+}
+
+void parseInput(String input) {
+  int separatorIndex = input.indexOf(':');
+  if (separatorIndex != -1) {
+    frecuencia = input.substring(0, separatorIndex).toInt();
+    int state = input.substring(separatorIndex + 1).toInt();
+    allow_sound = (state == 1);
   }
 }
